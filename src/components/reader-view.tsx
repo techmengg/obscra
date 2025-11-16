@@ -112,7 +112,7 @@ export function ReaderView({ novel, initialIndex }: ReaderViewProps) {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#020202] text-zinc-100 md:flex-row">
-      <aside className="flex flex-col border-b border-zinc-900 text-sm text-zinc-500 md:h-screen md:w-72 md:border-b-0 md:border-r">
+      <aside className="z-10 flex flex-col border-b border-zinc-900 text-sm text-zinc-500 md:fixed md:left-0 md:top-0 md:h-screen md:w-72 md:border-b-0 md:border-r md:bg-[#020202]">
         <div className="grid grid-cols-3 text-center text-[0.65rem] uppercase tracking-[0.3em] md:flex md:flex-col md:text-xs">
           {navItems.map((item, idx) => (
             <button
@@ -127,9 +127,9 @@ export function ReaderView({ novel, initialIndex }: ReaderViewProps) {
             </button>
           ))}
         </div>
-        <div className="flex flex-1 flex-col px-5 py-4 text-xs">
+        <div className="flex flex-1 flex-col overflow-hidden px-5 py-4 text-xs">
           {activePanel === "chapters" && (
-            <div className="flex flex-1 flex-col gap-2 overflow-y-auto pr-1">
+            <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1 scrollbar-thin">
               {novel.chapters.map((chapter, index) => {
                 const active = index === currentIndex;
                 return (
@@ -162,7 +162,7 @@ export function ReaderView({ novel, initialIndex }: ReaderViewProps) {
         </div>
       </aside>
 
-      <main className="flex flex-1 flex-col gap-6 px-6 py-8">
+      <main className="flex flex-1 flex-col gap-6 px-6 py-8 md:ml-72">
         <header className="flex flex-col gap-4 text-sm text-zinc-400 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-3">
             <Link
@@ -218,11 +218,20 @@ export function ReaderView({ novel, initialIndex }: ReaderViewProps) {
 
         <article
           key={currentChapter?.id}
-          className="chapter-content mx-auto flex-1 w-full max-w-3xl whitespace-pre-wrap text-[0.95rem] leading-7 text-zinc-100"
+          className="chapter-content mx-auto flex-1 w-full max-w-3xl text-[0.95rem] leading-7 text-zinc-100"
           dangerouslySetInnerHTML={{
             __html: currentChapter?.content || "<p>No content imported.</p>",
           }}
         />
+        {/* Debug: Check if content has images */}
+        {process.env.NODE_ENV === "development" && currentChapter?.content && (
+          <div className="fixed bottom-4 right-4 bg-black/80 text-xs p-2 text-zinc-400 z-50 max-w-xs">
+            <div>Has img tags: {(currentChapter.content.match(/<img/g) || []).length}</div>
+            <div>Has SVG: {(currentChapter.content.match(/<svg/g) || []).length}</div>
+            <div>Has data URIs: {currentChapter.content.includes("data:image") ? "Yes" : "No"}</div>
+            <div>Content length: {currentChapter.content.length}</div>
+          </div>
+        )}
       </main>
     </div>
   );

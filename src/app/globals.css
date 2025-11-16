@@ -34,9 +34,34 @@ a {
   color: var(--muted);
 }
 
-.chapter-content * {
+/* Default color and font, but allow EPUB inline styles to override */
+.chapter-content {
   color: var(--foreground);
   font-family: inherit;
+}
+
+/* Apply color and font to text elements, but preserve SVG and decorative element colors */
+.chapter-content p,
+.chapter-content span,
+.chapter-content div,
+.chapter-content h1,
+.chapter-content h2,
+.chapter-content h3,
+.chapter-content h4,
+.chapter-content h5,
+.chapter-content h6,
+.chapter-content li,
+.chapter-content td,
+.chapter-content th {
+  color: inherit;
+  font-family: inherit;
+}
+
+/* Don't override colors in SVG elements - they need their original colors */
+.chapter-content svg,
+.chapter-content svg * {
+  color: initial;
+  font-family: initial;
 }
 
 .chapter-content img {
@@ -44,4 +69,67 @@ a {
   height: auto;
   display: block;
   margin: 1rem auto;
+}
+
+/* Preserve EPUB styling for images and decorative elements */
+.chapter-content img[style],
+.chapter-content svg,
+.chapter-content [class*="ornament"],
+.chapter-content [class*="decorative"],
+.chapter-content [class*="header"] {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Allow EPUB styles to override defaults */
+.chapter-content [style] {
+  /* Let inline styles take precedence */
+}
+
+/* Minimal scrollbar styles for sidebar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(63 63 70) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgb(63 63 70);
+  border-radius: 3px;
+}
+
+.scrollbar-thin:hover::-webkit-scrollbar-thumb,
+.scrollbar-thin:active::-webkit-scrollbar-thumb {
+  background-color: rgb(82 82 91);
+}
+
+/* Ensure scrollbar is always visible when content overflows */
+aside .overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(63 63 70) transparent;
+}
+
+aside .overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+  display: block;
+}
+
+aside .overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+aside .overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: rgb(63 63 70);
+  border-radius: 3px;
+}
+
+aside .overflow-y-auto:hover::-webkit-scrollbar-thumb {
+  background-color: rgb(82 82 91);
 }

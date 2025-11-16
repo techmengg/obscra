@@ -22,27 +22,35 @@ export async function POST(request: Request) {
   try {
     const parsed = await parseEpub(buffer, file.name);
 
-    const novel = await prisma.$transaction(async (tx) => {
-      const novelRecord = await tx.novel.create({
-        data: {
-          title: parsed.title,
-          author: parsed.author,
-          description: parsed.description,
-          userId: session.user.id,
-        },
-      });
+    // Increase transaction timeout to handle large content with embedded images
+    // Default is 5000ms, but with data URIs for images, content can be very large
+    const novel = await prisma.$transaction(
+      async (tx) => {
+        const novelRecord = await tx.novel.create({
+          data: {
+            title: parsed.title,
+            author: parsed.author,
+            description: parsed.description,
+            coverImage: parsed.coverImage,
+            userId: session.user.id,
+          },
+        });
 
-      await tx.chapter.createMany({
-        data: parsed.chapters.map((chapter, index) => ({
-          novelId: novelRecord.id,
-          title: chapter.title,
-          content: chapter.content,
-          position: index,
-        })),
-      });
+        await tx.chapter.createMany({
+          data: parsed.chapters.map((chapter, index) => ({
+            novelId: novelRecord.id,
+            title: chapter.title,
+            content: chapter.content,
+            position: index,
+          })),
+        });
 
-      return novelRecord;
-    });
+        return novelRecord;
+      },
+      {
+        timeout: 120000, // 120 seconds (2 minutes) - enough for large EPUBs with many images
+      }
+    );
 
     return NextResponse.json({ success: true, novelId: novel.id });
   } catch (error) {
