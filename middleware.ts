@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { authEdge } from "@/lib/auth-edge";
 
 const publicRoutes = ["/login", "/register", "/api/register"];
 
-export default auth((request) => {
+export default authEdge((request) => {
   const { nextUrl } = request;
   const isAuthenticated = Boolean(request.auth);
   const pathname = nextUrl.pathname;
