@@ -17,7 +17,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Reduce layout shift */
+/* Reduce layout shift d*/
 * {
   box-sizing: border-box;
 }
