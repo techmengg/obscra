@@ -18,11 +18,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No EPUB provided." }, { status: 400 });
     }
 
-    // Validate file size (max 100MB)
-    const MAX_FILE_SIZE = 100 * 1024 * 1024;
+    // Validate file size (aligned with Vercel limits)
+    const MAX_FILE_SIZE = 4 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: "File too large. Maximum size is 100MB." },
+        { error: "File too large. Maximum size is 4MB." },
         { status: 400 }
       );
     }

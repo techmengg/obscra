@@ -13,6 +13,14 @@ export const EpubImport = memo(function EpubImport() {
     const file = input.files?.[0];
     if (!file) return;
 
+    const MAX_FILE_SIZE_MB = 4;
+    const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setStatus(`File too large. Maximum size is ${MAX_FILE_SIZE_MB}MB.`);
+      input.value = "";
+      return;
+    }
+
     setIsUploading(true);
     setStatus("importing...");
     const payload = new FormData();
