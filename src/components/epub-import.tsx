@@ -25,7 +25,16 @@ export const EpubImport = memo(function EpubImport() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ filename, contentType }),
+          credentials: "include",
         });
+
+        if (uploadUrlResponse.redirected) {
+          setStatus("Session expired. Please log in again.");
+          setIsUploading(false);
+          router.replace("/login");
+          input.value = "";
+          return;
+        }
 
         if (!uploadUrlResponse.ok) {
           const data = (await uploadUrlResponse.json().catch(() => ({}))) as {
@@ -61,7 +70,16 @@ export const EpubImport = memo(function EpubImport() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ key, filename }),
+          credentials: "include",
         });
+
+        if (importResponse.redirected) {
+          setStatus("Session expired. Please log in again.");
+          setIsUploading(false);
+          router.replace("/login");
+          input.value = "";
+          return;
+        }
 
         if (!importResponse.ok) {
           const data = (await importResponse.json().catch(() => ({}))) as {
