@@ -12,6 +12,10 @@ type ReaderPageProps = {
   }>;
 };
 
+// Enable static optimization where possible
+export const dynamic = 'force-dynamic'; // Required due to auth check
+export const revalidate = 0;
+
 export default async function ReaderPage({ params, searchParams }: ReaderPageProps) {
   const { novelId } = await params;
   const search = await searchParams;
@@ -21,14 +25,25 @@ export default async function ReaderPage({ params, searchParams }: ReaderPagePro
     redirect("/login");
   }
 
+  // Optimized query - select only needed fields
   const novel = await prisma.novel.findFirst({
     where: {
       id: novelId,
       userId: session.user.id,
     },
-    include: {
+    select: {
+      id: true,
+      title: true,
+      author: true,
+      description: true,
+      coverImage: true,
       chapters: {
         orderBy: { position: "asc" },
+        select: {
+          id: true,
+          title: true,
+          content: true,
+        },
       },
     },
   });

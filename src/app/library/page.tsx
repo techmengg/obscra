@@ -6,6 +6,10 @@ import { LibraryItemActions } from "@/components/library-item-actions";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+// Enable dynamic rendering for authenticated pages
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function LibraryPage() {
   const session = await auth();
 
@@ -13,10 +17,17 @@ export default async function LibraryPage() {
     redirect("/login");
   }
 
+  // Optimized query with indexed fields
   const novels = await prisma.novel.findMany({
     where: { userId: session.user.id },
     orderBy: { updatedAt: "desc" },
-    include: {
+    select: {
+      id: true,
+      title: true,
+      author: true,
+      description: true,
+      coverImage: true,
+      updatedAt: true,
       _count: {
         select: { chapters: true },
       },
@@ -24,15 +35,15 @@ export default async function LibraryPage() {
   });
 
   return (
-    <div className="flex min-h-screen flex-col gap-8 bg-[#020202] px-6 py-8 text-zinc-100">
+    <div className="flex min-h-screen flex-col gap-4 md:gap-8 bg-[#020202] px-3 md:px-6 py-4 md:py-8 text-zinc-100">
       <header className="flex flex-col gap-2">
-        <div className="flex items-center justify-between text-sm text-zinc-500">
-          <p className="uppercase tracking-[0.3em]">wnreader</p>
+        <div className="flex items-center justify-between text-xs md:text-sm text-zinc-500">
+          <p className="uppercase tracking-[0.25em] md:tracking-[0.3em]">wnreader</p>
           <SignOutButton />
         </div>
-        <div className="text-2xl text-zinc-50">
+        <div className="text-xl md:text-2xl text-zinc-50">
           <p>Library</p>
-          <p className="text-sm text-zinc-500">
+          <p className="text-xs md:text-sm text-zinc-500">
             {novels.length ? `${novels.length} projects saved` : "Nothing yet"}
           </p>
         </div>
@@ -42,7 +53,7 @@ export default async function LibraryPage() {
 
       <section className="flex flex-col divide-y divide-zinc-900 border border-zinc-900">
         {novels.length === 0 && (
-          <p className="px-4 py-6 text-sm text-zinc-500">
+          <p className="px-3 md:px-4 py-4 md:py-6 text-xs md:text-sm text-zinc-500">
             Imported chapters will show up here.
           </p>
         )}
@@ -53,31 +64,32 @@ export default async function LibraryPage() {
           return (
             <div
               key={novel.id}
-              className="flex flex-col gap-3 px-4 py-5 transition hover:bg-zinc-900/50 md:flex-row md:items-center"
+              className="flex flex-col gap-2 md:gap-3 px-3 md:px-4 py-3 md:py-5 transition hover:bg-zinc-900/50 md:flex-row md:items-center"
             >
-              <Link href={`/reader/${novel.id}`} className="flex flex-1 gap-4 text-left">
-                <div className="h-20 w-16 flex-shrink-0 border border-zinc-800 bg-zinc-900/40">
+              <Link href={`/reader/${novel.id}`} className="flex flex-1 gap-2 md:gap-4 text-left">
+                <div className="h-16 w-12 md:h-20 md:w-16 flex-shrink-0 border border-zinc-800 bg-zinc-900/40">
                   {novel.coverImage ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={novel.coverImage}
                       alt={`${novel.title} cover`}
                       className="h-full w-full object-cover"
+                      loading="lazy"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-[10px] uppercase tracking-[0.3em] text-zinc-600">
+                    <div className="flex h-full w-full items-center justify-center text-[8px] md:text-[10px] uppercase tracking-[0.25em] md:tracking-[0.3em] text-zinc-600">
                       no cover
                     </div>
                   )}
                 </div>
-                <div className="flex flex-1 flex-col gap-1">
-                  <div className="flex items-center justify-between text-sm text-zinc-500">
-                    <span>{novel.author || "Unknown"}</span>
-                    <span>{novel._count.chapters} chapters</span>
+                <div className="flex flex-1 flex-col gap-0.5 md:gap-1">
+                  <div className="flex items-center justify-between text-xs md:text-sm text-zinc-500">
+                    <span className="truncate">{novel.author || "Unknown"}</span>
+                    <span className="ml-2 flex-shrink-0">{novel._count.chapters}</span>
                   </div>
-                  <h2 className="text-lg text-zinc-100">{novel.title}</h2>
+                  <h2 className="text-sm md:text-lg text-zinc-100 leading-tight">{novel.title}</h2>
                 {summary && (
-                  <p className="max-h-10 overflow-hidden text-ellipsis text-sm text-zinc-500">
+                  <p className="max-h-8 md:max-h-10 overflow-hidden text-ellipsis text-xs md:text-sm text-zinc-500 leading-snug">
                     {summary}
                   </p>
                 )}

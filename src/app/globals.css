@@ -11,6 +11,51 @@ body {
   color: var(--foreground);
   font-family: var(--font-space-mono, "Space Mono", ui-monospace, "SFMono-Regular", Consolas, monospace);
   letter-spacing: 0.01em;
+  /* Performance: Enable GPU acceleration for smooth scrolling */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Reduce layout shift */
+* {
+  box-sizing: border-box;
+}
+
+/* Optimize animations for performance */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Active state scaling for mobile */
+.active\:scale-95:active {
+  transform: scale(0.95);
+}
+
+.active\:scale-98:active {
+  transform: scale(0.98);
+}
+
+.active\:scale-90:active {
+  transform: scale(0.9);
+}
+
+/* iOS-style momentum scrolling */
+.scrollbar-thin {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Safe area support for notched devices */
+@supports (padding: env(safe-area-inset-top)) {
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 a {
@@ -18,16 +63,32 @@ a {
 }
 
 .chapter-content p {
-  margin-bottom: 0.1rem;
+  margin-bottom: 1rem;
+}
+
+/* Paragraph override support */
+.chapter-content[data-paragraph-override="true"] p {
+  margin-bottom: var(--paragraph-spacing, 1rem);
+  text-indent: var(--paragraph-indent, 0);
 }
 
 .chapter-content h1,
 .chapter-content h2,
 .chapter-content h3 {
-  margin: 2rem 0 1rem;
-  font-size: 1.1rem;
+  margin: 1.5rem 0 0.75rem;
+  font-size: 0.95rem;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.15em;
+}
+
+@media (min-width: 768px) {
+  .chapter-content h1,
+  .chapter-content h2,
+  .chapter-content h3 {
+    margin: 2rem 0 1rem;
+    font-size: 1.1rem;
+    letter-spacing: 0.2em;
+  }
 }
 
 .chapter-content em {
@@ -68,7 +129,54 @@ a {
   max-width: 100%;
   height: auto;
   display: block;
-  margin: 1rem auto;
+  margin: 0.75rem auto;
+  /* Performance: Use GPU for image rendering */
+  transform: translateZ(0);
+  will-change: auto;
+}
+
+/* Ensure all content respects container padding */
+.chapter-content > * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* TTS Highlighting */
+.chapter-content .tts-highlight {
+  background-color: rgba(255, 215, 0, 0.3);
+  border-radius: 3px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  transition: background-color 0.2s ease;
+}
+
+.chapter-content .tts-word {
+  display: inline-block;
+  position: relative;
+}
+
+.chapter-content .tts-word.active {
+  background-color: rgba(255, 215, 0, 0.5);
+  border-radius: 3px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: pulse 0.3s ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@media (min-width: 768px) {
+  .chapter-content img {
+    margin: 1rem auto;
+  }
 }
 
 /* Preserve EPUB styling for images and decorative elements */
@@ -132,4 +240,87 @@ aside .overflow-y-auto::-webkit-scrollbar-thumb {
 
 aside .overflow-y-auto:hover::-webkit-scrollbar-thumb {
   background-color: rgb(82 82 91);
+}
+
+/* Range slider styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+}
+
+input[type="range"]::-webkit-slider-track {
+  background: rgb(39 39 42);
+  height: 4px;
+  border-radius: 2px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgb(161 161 170);
+  height: 16px;
+  width: 16px;
+  border-radius: 8px;
+  margin-top: -6px;
+  transition: background 0.2s;
+}
+
+input[type="range"]:hover::-webkit-slider-thumb {
+  background: rgb(212 212 216);
+}
+
+input[type="range"]::-moz-range-track {
+  background: rgb(39 39 42);
+  height: 4px;
+  border-radius: 2px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  background: rgb(161 161 170);
+  height: 16px;
+  width: 16px;
+  border-radius: 8px;
+  border: none;
+  transition: background 0.2s;
+}
+
+input[type="range"]:hover::-moz-range-thumb {
+  background: rgb(212 212 216);
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid rgb(63 63 70);
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+input[type="checkbox"]:hover {
+  border-color: rgb(113 113 122);
+}
+
+input[type="checkbox"]:checked {
+  background: rgb(161 161 170);
+  border-color: rgb(161 161 170);
+}
+
+input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgb(24 24 27);
+  font-size: 11px;
+  font-weight: bold;
 }

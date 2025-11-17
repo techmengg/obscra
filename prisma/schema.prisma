@@ -17,6 +17,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
   novels        Novel[]
+
+  @@index([email])
 }
 
 model Account {
@@ -64,6 +66,9 @@ model Novel {
   updatedAt   DateTime  @updatedAt
   chapters    Chapter[]
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, updatedAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
 }
 
 model Chapter {

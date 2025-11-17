@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState, memo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 type LibraryItemActionsProps = {
@@ -8,7 +8,7 @@ type LibraryItemActionsProps = {
   title: string;
 };
 
-export function LibraryItemActions({ novelId, title }: LibraryItemActionsProps) {
+export const LibraryItemActions = memo(function LibraryItemActions({ novelId, title }: LibraryItemActionsProps) {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(title);
@@ -29,7 +29,7 @@ export function LibraryItemActions({ novelId, title }: LibraryItemActionsProps) 
     });
   };
 
-  const handleRename = async (event: FormEvent<HTMLFormElement>) => {
+  const handleRename = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsBusy(true);
     setError(null);
@@ -50,9 +50,9 @@ export function LibraryItemActions({ novelId, title }: LibraryItemActionsProps) 
 
     setIsEditing(false);
     router.refresh();
-  };
+  }, [novelId, value, router]);
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     if (!confirm("Delete this import? This removes all chapters.")) {
       return;
     }
@@ -69,7 +69,7 @@ export function LibraryItemActions({ novelId, title }: LibraryItemActionsProps) 
     }
 
     router.refresh();
-  };
+  }, [novelId, router]);
 
   if (isEditing) {
     return (
@@ -104,8 +104,8 @@ export function LibraryItemActions({ novelId, title }: LibraryItemActionsProps) 
   }
 
   return (
-    <div className="flex flex-col gap-1 text-xs uppercase tracking-[0.3em] text-zinc-500">
-      {error && <span className="text-red-400 normal-case tracking-normal">{error}</span>}
+    <div className="flex flex-col gap-1 text-[0.65rem] md:text-xs uppercase tracking-[0.25em] md:tracking-[0.3em] text-zinc-500">
+      {error && <span className="text-red-400 normal-case tracking-normal text-xs">{error}</span>}
       <button
         type="button"
         onClick={toggleEditing}
@@ -124,4 +124,4 @@ export function LibraryItemActions({ novelId, title }: LibraryItemActionsProps) 
       </button>
     </div>
   );
-}
+});
