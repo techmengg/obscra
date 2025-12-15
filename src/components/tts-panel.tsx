@@ -86,14 +86,14 @@ export const TTSPanel = memo(function TTSPanel({
     if (tts.isPlaying || tts.isPaused) {
       tts.stop();
     }
-  }, [tts.isPaused, tts.isPlaying, tts.stop]);
+  }, [tts]);
 
   const stopElevenLabs = useCallback(() => {
     if (elevenLabs.isPlaying || elevenLabs.isPaused) {
       elevenLabs.stop();
     }
     clearWordHighlight();
-  }, [clearWordHighlight, elevenLabs.isPaused, elevenLabs.isPlaying, elevenLabs.stop]);
+  }, [clearWordHighlight, elevenLabs]);
 
   const handleChapterComplete = useCallback(() => {
     if (!autoAdvanceEnabled) return;
@@ -113,7 +113,7 @@ export const TTSPanel = memo(function TTSPanel({
     [provider, stopBrowserVoices, stopElevenLabs, clearWordHighlight]
   );
 
-  const handlePlayPause = () => {
+  const handlePlayPause = useCallback(() => {
     if (isBrowserProvider) {
       if (!tts.isPlaying) {
         stopElevenLabs();
@@ -136,12 +136,23 @@ export const TTSPanel = memo(function TTSPanel({
         elevenLabs.pause();
       }
     }
-  };
+  }, [
+    chapterContent,
+    clearWordHighlight,
+    elevenLabs,
+    handleChapterComplete,
+    isBrowserProvider,
+    isGenerating,
+    onWordChange,
+    stopBrowserVoices,
+    stopElevenLabs,
+    tts,
+  ]);
 
-  const handleStop = () => {
+  const handleStop = useCallback(() => {
     stopBrowserVoices();
     stopElevenLabs();
-  };
+  }, [stopBrowserVoices, stopElevenLabs]);
 
   const handleVolumeChange = (value: number) => {
     if (isBrowserProvider) {

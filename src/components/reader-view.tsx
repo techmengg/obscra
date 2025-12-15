@@ -472,7 +472,7 @@ export const ReaderView = memo(function ReaderView({ novel, initialIndex }: Read
             autoAdvanceEnabled={autoAdvanceEnabled}
             onAutoAdvanceChange={handleAutoAdvanceChange}
             onAutoAdvanceRequestNextChapter={handleAutoAdvanceRequestNextChapter}
-            hasNextChapter={currentIndex < maxIndex}
+            hasNextChapter={hasNextChapter}
             autoStartKey={autoStartPlaybackKey}
             theme={currentTheme}
           />
@@ -516,7 +516,7 @@ export const ReaderView = memo(function ReaderView({ novel, initialIndex }: Read
             backgroundColor: currentTheme.background,
           }}
         >
-          {navItems.map((item, idx) => (
+          {navItems.map((item) => (
             <button
               key={item.key}
               type="button"

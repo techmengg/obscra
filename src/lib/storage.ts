@@ -10,7 +10,6 @@ const endpoint = process.env.S3_ENDPOINT;
 if (!bucket || !region || !accessKeyId || !secretAccessKey) {
   // We intentionally don't throw here to avoid breaking builds,
   // but API routes that rely on storage should validate configuration.
-  // eslint-disable-next-line no-console
   console.warn(
     "[storage] Missing S3 configuration. Set S3_BUCKET_NAME, S3_REGION, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY."
   );
@@ -60,4 +59,3 @@ export async function createDownloadUrl(opts: {
     expiresIn: opts.expiresInSeconds ?? 60 * 10,
   });
 }
-

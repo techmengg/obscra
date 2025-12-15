@@ -1,4 +1,4 @@
-## wnreader
+## Obscra
 
 A minimal blacked-out web reader for personal webnovels. Import `.epub` files, keep them in Postgres per-account, and read them inside a distraction-free monospace interface.
 
@@ -38,7 +38,7 @@ A minimal blacked-out web reader for personal webnovels. Import `.epub` files, k
    ELEVENLABS_DEFAULT_VOICE_ID="voice-id-from-dashboard"
    ELEVENLABS_MODEL_ID="eleven_multilingual_v2" # override with another ElevenLabs model if needed
    ```
-   - If you used the bundled Docker setup, the connection string should be `postgresql://postgres:postgres@localhost:5432/wnreader?schema=public`.
+- If you used the bundled Docker setup, the connection string should be `postgresql://postgres:postgres@localhost:5432/obscra?schema=public`.
 4. Apply the Prisma schema to your database:
    ```bash
    npx prisma db push

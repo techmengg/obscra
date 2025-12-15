@@ -311,7 +311,7 @@ export async function parseEpub(buffer: Buffer, fallbackTitle: string): Promise<
     
     // Also try looking up in manifest href map for exact matches
     if (!file) {
-      for (const [manifestPath, manifestItem] of manifestHrefMap.entries()) {
+      for (const [, manifestItem] of manifestHrefMap.entries()) {
         const manifestHref = manifestItem?.["@_href"];
         if (manifestHref) {
           const resolvedManifestPath = resolveZipPath(baseDir, manifestHref);
@@ -461,17 +461,17 @@ export async function parseEpub(buffer: Buffer, fallbackTitle: string): Promise<
       if (src && !src.startsWith("data:") && !/^https?:\/\//i.test(src)) {
         const resourcePath = resolveZipPath(htmlDir, src);
         const task = (async () => {
-          const dataUri = await getResourceDataUri(resourcePath);
+            const dataUri = await getResourceDataUri(resourcePath);
           if (dataUri) {
             img.attr("src", dataUri);
           } else {
             // Try to find the image in the manifest
-            const foundInManifest = Array.from(manifestHrefMap.entries()).find(([path, item]) => {
+            const foundInManifest = Array.from(manifestHrefMap.entries()).find(([, item]) => {
               const href = item?.["@_href"];
               return href && (href.endsWith(src) || href.includes(src));
             });
             if (foundInManifest) {
-              const [manifestPath, manifestItem] = foundInManifest;
+              const [, manifestItem] = foundInManifest;
               const manifestHref = manifestItem?.["@_href"];
               if (manifestHref) {
                 const correctPath = resolveZipPath(baseDir, manifestHref);

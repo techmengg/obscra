@@ -5,7 +5,6 @@ import {
   ReaderPreferences,
   Theme,
   FontFamily,
-  PageTurnMode,
   THEMES,
   FONT_FAMILIES,
 } from "@/lib/reader-preferences";
@@ -547,4 +546,3 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
     </div>
   );
 });
-

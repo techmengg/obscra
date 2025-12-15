@@ -1,6 +1,6 @@
 # Performance Optimizations
 
-This document outlines all the performance optimizations implemented in the wnreader application.
+This document outlines all the performance optimizations implemented in the Obscra application.
 
 ## Database Optimizations
 
@@ -218,4 +218,3 @@ Expected improvements:
 - **Smaller bundle size**: Tree-shaking and optimization reduce bundle by ~20%
 - **Better error handling**: Users see friendly errors instead of crashes
 - **Improved reliability**: Error boundaries prevent full app crashes
-

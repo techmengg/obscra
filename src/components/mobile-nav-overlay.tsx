@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface MobileNavOverlayProps {
   isOpen: boolean;
@@ -98,4 +97,3 @@ export const MobileNavOverlay = memo(function MobileNavOverlay({
     </>
   );
 });
-

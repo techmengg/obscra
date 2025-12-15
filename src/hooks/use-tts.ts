@@ -52,6 +52,7 @@ export function useTTS() {
   const shouldAnnounceCompletionRef = useRef(false);
   const manualStopModeRef = useRef<ManualStopMode>(null);
   const resumeWordIndexRef = useRef(0);
+  const playFromWordIndexRef = useRef<((index: number) => void) | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
@@ -198,7 +199,7 @@ export function useTTS() {
         if (manualStopModeRef.current === "skip") {
           const restartIndex = resumeWordIndexRef.current;
           manualStopModeRef.current = null;
-          playFromWordIndex(restartIndex);
+          playFromWordIndexRef.current?.(restartIndex);
           return;
         }
 
@@ -215,6 +216,10 @@ export function useTTS() {
     },
     [resetPlaybackState, state.pitch, state.rate, state.selectedVoice, state.volume]
   );
+
+  useEffect(() => {
+    playFromWordIndexRef.current = playFromWordIndex;
+  }, [playFromWordIndex]);
 
   const speak = useCallback(
     (htmlContent: string, onWordChange?: (index: number) => void, options?: SpeakOptions) => {
@@ -340,6 +345,5 @@ export function useTTS() {
     setRate,
     setPitch,
     setVolume,
-    words: wordsRef.current,
   };
 }

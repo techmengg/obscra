@@ -5,7 +5,7 @@ export default function NotFound() {
     <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#020202] px-6 text-zinc-100">
       <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">404</p>
       <p className="text-center text-sm text-zinc-400">
-        The page you're looking for doesn't exist.
+        The page you&apos;re looking for doesn&apos;t exist.
       </p>
       <Link
         href="/library"
@@ -16,4 +16,3 @@ export default function NotFound() {
     </div>
   );
 }
-
