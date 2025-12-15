@@ -10,8 +10,9 @@ export default authEdge((request) => {
 
   const isPublic = publicRoutes.some((route) => pathname.startsWith(route));
   const isAuthRoute = pathname.startsWith("/login") || pathname.startsWith("/register");
+  const isLanding = pathname === "/";
 
-  if (!isAuthenticated && !isPublic && !pathname.startsWith("/api/auth")) {
+  if (!isAuthenticated && !isPublic && !isLanding && !pathname.startsWith("/api/auth")) {
     return NextResponse.redirect(new URL("/login", nextUrl));
   }
 
