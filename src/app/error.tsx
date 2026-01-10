@@ -14,7 +14,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#020202] px-6 text-zinc-100">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#151515] px-6 text-zinc-100">
       <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">Error</p>
       <p className="max-w-md text-center text-sm text-zinc-400">
         {error.message || "Something went wrong. Please try again."}
@@ -23,14 +23,14 @@ export default function Error({
         <button
           type="button"
           onClick={reset}
-          className="border border-zinc-800 px-4 py-2 text-xs uppercase tracking-[0.3em] text-zinc-200 transition hover:border-zinc-200"
+          className="border-b border-zinc-500 pb-1 text-xs uppercase tracking-[0.3em] text-zinc-200 transition hover:border-zinc-300 hover:text-white"
         >
           Try again
         </button>
         <button
           type="button"
           onClick={() => window.location.href = "/library"}
-          className="border border-zinc-800 px-4 py-2 text-xs uppercase tracking-[0.3em] text-zinc-200 transition hover:border-zinc-200"
+          className="border-b border-zinc-500 pb-1 text-xs uppercase tracking-[0.3em] text-zinc-200 transition hover:border-zinc-300 hover:text-white"
         >
           Go to Library
         </button>
