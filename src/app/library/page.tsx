@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { EpubImport } from "@/components/epub-import";
@@ -9,6 +10,10 @@ import { prisma } from "@/lib/prisma";
 // Enable dynamic rendering for authenticated pages
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+  title: "library",
+};
 
 export default async function LibraryPage() {
   const session = await auth();

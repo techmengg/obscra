@@ -77,7 +77,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Obscra",
+  title: {
+    default: "obscra | epub/pdf reader",
+    template: "obscra | %s",
+  },
   description: "A distraction-free webnovel reader for imported EPUB files.",
 };
 

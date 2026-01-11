@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { ReaderView } from "@/components/reader-view";
 import { auth } from "@/lib/auth";
@@ -15,6 +16,10 @@ type ReaderPageProps = {
 // Enable static optimization where possible
 export const dynamic = 'force-dynamic'; // Required due to auth check
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+  title: "reader",
+};
 
 export default async function ReaderPage({ params, searchParams }: ReaderPageProps) {
   const { novelId } = await params;

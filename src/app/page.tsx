@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: "obscra | personalized reader",
+  },
+};
 
 export default async function Home() {
   const session = await auth();
