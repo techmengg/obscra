@@ -47,7 +47,7 @@ export const MobileNavOverlay = memo(function MobileNavOverlay({
   return (
     <>
       <div
-        className={`fixed inset-0 z-40 bg-black/70 backdrop-blur-md transition-opacity duration-200 ${
+        className={`fixed inset-0 z-40 bg-black/70 transition-opacity duration-200 ${
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
@@ -55,11 +55,12 @@ export const MobileNavOverlay = memo(function MobileNavOverlay({
       />
 
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-[90vw] max-w-[380px] shadow-2xl transition-transform duration-300 ${
+        className={`fixed inset-y-0 left-0 z-50 w-[90vw] max-w-[380px] border-r transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{
           backgroundColor: currentTheme.background,
+          borderColor: currentTheme.border,
           paddingTop: "env(safe-area-inset-top)",
           paddingBottom: "env(safe-area-inset-bottom)",
           pointerEvents: isOpen ? "auto" : "none",
@@ -75,8 +76,9 @@ export const MobileNavOverlay = memo(function MobileNavOverlay({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-10 w-10 items-center justify-center rounded-full transition-all active:scale-95 hover:bg-zinc-900/50"
+            className="flex h-10 w-10 items-center justify-center border transition active:scale-95"
             aria-label="Close menu"
+            style={{ borderColor: currentTheme.border }}
           >
             <svg
               width="18"

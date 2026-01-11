@@ -22,9 +22,7 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
     "theme" | "font" | "layout" | "spacing"
   >("theme");
 
-  const isMobile =
-    typeof window !== "undefined" && window.innerWidth < 768;
-
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const currentTheme = THEMES[preferences.theme] || THEMES.dark;
 
   const updatePreference = <K extends keyof ReaderPreferences>(
@@ -61,38 +59,32 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
     });
   };
 
+  const sectionTabs = [
+    { key: "theme" as const, label: "Theme" },
+    { key: "font" as const, label: "Type" },
+    { key: "layout" as const, label: "Layout" },
+    { key: "spacing" as const, label: "Spacing" },
+  ];
+
   return (
     <div className="flex h-full flex-col">
-      {/* Section Navigation */}
-      <div 
-        className="grid grid-cols-2 text-center text-[0.55rem] md:text-[0.65rem] uppercase tracking-[0.15em] md:tracking-[0.3em]"
+      <div
+        className="grid grid-cols-2 text-center text-[0.55rem] uppercase tracking-[0.25em]"
         style={{ borderBottom: `1px solid ${currentTheme.border}` }}
       >
-        {[
-          { key: "theme" as const, label: "Theme & Display" },
-          { key: "font" as const, label: "Typography" },
-          { key: "layout" as const, label: "Layout & Margins" },
-          { key: "spacing" as const, label: "Spacing" },
-        ].map((section) => (
+        {sectionTabs.map((section, idx) => (
           <button
             key={section.key}
             type="button"
             onClick={() => setActiveSection(section.key)}
-            className="px-2 py-2 md:py-3 transition last:border-r-0"
+            className="px-2 py-3 transition"
             style={{
-              borderRight: section.key !== "spacing" ? `1px solid ${currentTheme.border}` : 'none',
-              backgroundColor: activeSection === section.key ? currentTheme.active : 'transparent',
-              color: activeSection === section.key ? currentTheme.activeForeground : currentTheme.muted,
-            }}
-            onMouseEnter={(e) => {
-              if (activeSection !== section.key) {
-                e.currentTarget.style.color = currentTheme.hoverForeground;
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (activeSection !== section.key) {
-                e.currentTarget.style.color = currentTheme.muted;
-              }
+              borderRight: idx % 2 === 0 ? `1px solid ${currentTheme.border}` : "none",
+              borderBottom:
+                activeSection === section.key
+                  ? `1px solid ${currentTheme.foreground}`
+                  : "1px solid transparent",
+              color: activeSection === section.key ? currentTheme.foreground : currentTheme.muted,
             }}
           >
             {section.label}
@@ -100,47 +92,34 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
         ))}
       </div>
 
-      {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4 scrollbar-thin">
-        {/* THEME & DISPLAY SECTION */}
         {activeSection === "theme" && (
           <div className="flex flex-col gap-6">
             <div>
-              <h3 
+              <h3
                 className="mb-3 text-xs uppercase tracking-[0.3em]"
                 style={{ color: currentTheme.mutedForeground }}
               >
-                Color Theme
+                Theme
               </h3>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-col gap-2">
                 {(Object.keys(THEMES) as Theme[]).map((themeKey) => {
                   const theme = THEMES[themeKey];
+                  const isActive = preferences.theme === themeKey;
                   return (
                     <button
                       key={themeKey}
                       type="button"
                       onClick={() => updatePreference("theme", themeKey)}
-                      className={`flex flex-col gap-2 rounded border p-3 transition ${
-                        preferences.theme === themeKey
-                          ? "border-zinc-400 bg-zinc-900"
-                          : "border-zinc-800 hover:border-zinc-600"
-                      }`}
+                      className="flex items-center justify-between border-b px-2 py-2 text-xs transition"
+                      style={{
+                        borderColor: isActive ? currentTheme.foreground : currentTheme.border,
+                        color: isActive ? currentTheme.foreground : currentTheme.muted,
+                      }}
                     >
-                      <div
-                        className="h-12 w-full rounded border"
-                        style={{
-                          backgroundColor: theme.background,
-                          borderColor: theme.border,
-                        }}
-                      >
-                        <div
-                          className="flex h-full items-center justify-center text-xs"
-                          style={{ color: theme.foreground }}
-                        >
-                          Aa
-                        </div>
-                      </div>
-                      <span className="text-xs text-zinc-400">{theme.name}</span>
+                      <span className="uppercase tracking-[0.2em]">{theme.name}</span>
+                      <span className="text-[0.6rem]">{isActive ? "selected" : ""}</span>
+                      <span className="h-2 w-2" style={{ backgroundColor: theme.foreground }} />
                     </button>
                   );
                 })}
@@ -148,7 +127,7 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
             </div>
 
             <div>
-              <h3 
+              <h3
                 className="mb-3 text-xs uppercase tracking-[0.3em]"
                 style={{ color: currentTheme.mutedForeground }}
               >
@@ -163,7 +142,7 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
                   onChange={(e) => updatePreference("fontSize", Number(e.target.value))}
                   className="flex-1"
                 />
-                <span 
+                <span
                   className="w-12 text-right text-xs"
                   style={{ color: currentTheme.mutedForeground }}
                 >
@@ -173,40 +152,38 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
             </div>
 
             <div>
-              <h3 
+              <h3
                 className="mb-3 text-xs uppercase tracking-[0.3em]"
                 style={{ color: currentTheme.mutedForeground }}
               >
-                Text Alignment
+                Text Align
               </h3>
               <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => updatePreference("textAlign", "left")}
-                  className={`flex-1 border px-3 py-2 text-xs transition ${
-                    preferences.textAlign === "left"
-                      ? "border-zinc-400 bg-zinc-900 text-zinc-50"
-                      : "border-zinc-800 text-zinc-500 hover:border-zinc-600"
-                  }`}
-                >
-                  Left
-                </button>
-                <button
-                  type="button"
-                  onClick={() => updatePreference("textAlign", "justify")}
-                  className={`flex-1 border px-3 py-2 text-xs transition ${
-                    preferences.textAlign === "justify"
-                      ? "border-zinc-400 bg-zinc-900 text-zinc-50"
-                      : "border-zinc-800 text-zinc-500 hover:border-zinc-600"
-                  }`}
-                >
-                  Justify
-                </button>
+                {(["left", "justify"] as const).map((align) => (
+                  <button
+                    key={align}
+                    type="button"
+                    onClick={() => updatePreference("textAlign", align)}
+                    className="flex-1 border-b px-3 py-2 text-xs transition"
+                    style={{
+                      borderColor:
+                        preferences.textAlign === align
+                          ? currentTheme.foreground
+                          : currentTheme.border,
+                      color:
+                        preferences.textAlign === align
+                          ? currentTheme.foreground
+                          : currentTheme.muted,
+                    }}
+                  >
+                    {align}
+                  </button>
+                ))}
               </div>
             </div>
 
             <div>
-              <h3 
+              <h3
                 className="mb-3 text-xs uppercase tracking-[0.3em]"
                 style={{ color: currentTheme.mutedForeground }}
               >
@@ -222,7 +199,7 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
                   onChange={(e) => updatePreference("maxWidth", Number(e.target.value))}
                   className="flex-1"
                 />
-                <span 
+                <span
                   className="w-16 text-right text-xs"
                   style={{ color: currentTheme.mutedForeground }}
                 >
@@ -233,11 +210,10 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
           </div>
         )}
 
-        {/* FONT SECTION */}
         {activeSection === "font" && (
           <div className="flex flex-col gap-6">
             <div>
-              <h3 
+              <h3
                 className="mb-3 text-xs uppercase tracking-[0.3em]"
                 style={{ color: currentTheme.mutedForeground }}
               >
@@ -246,32 +222,26 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
               <div className="flex flex-col gap-2">
                 {(Object.keys(FONT_FAMILIES) as FontFamily[]).map((fontKey) => {
                   const font = FONT_FAMILIES[fontKey];
+                  const isActive = preferences.fontFamily === fontKey;
                   return (
                     <button
                       key={fontKey}
                       type="button"
                       onClick={() => updatePreference("fontFamily", fontKey)}
-                      className={`border px-4 py-3 text-left transition ${
-                        preferences.fontFamily === fontKey
-                          ? "border-zinc-400 bg-zinc-900"
-                          : "border-zinc-800 hover:border-zinc-600"
-                      }`}
+                      className="border-b px-3 py-2 text-left transition"
+                      style={{
+                        borderColor: isActive ? currentTheme.foreground : currentTheme.border,
+                        color: isActive ? currentTheme.foreground : currentTheme.muted,
+                      }}
                     >
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-3">
                         <div className="flex flex-col gap-1">
-                          <span className="text-xs text-zinc-400">
-                            {font.name}
-                          </span>
-                          <span
-                            className="text-sm"
-                            style={{ fontFamily: font.family }}
-                          >
+                          <span className="text-xs text-zinc-400">{font.name}</span>
+                          <span className="text-sm" style={{ fontFamily: font.family }}>
                             The quick brown fox jumps over the lazy dog
                           </span>
                         </div>
-                        {preferences.fontFamily === fontKey && (
-                          <span className="text-zinc-400">✓</span>
-                        )}
+                        <span className="text-[0.6rem]">{isActive ? "selected" : ""}</span>
                       </div>
                     </button>
                   );
@@ -281,62 +251,56 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
           </div>
         )}
 
-        {/* LAYOUT & MARGINS SECTION */}
         {activeSection === "layout" && (
           <div className="flex flex-col gap-6">
             {isMobile && (
               <div>
-                <h3 
+                <h3
                   className="mb-3 text-xs uppercase tracking-[0.3em]"
                   style={{ color: currentTheme.mutedForeground }}
                 >
-                  Page Turn Mode
+                  Page Turn
                 </h3>
                 <div className="flex flex-col gap-2">
                   {[
-                    { key: "infinite-scroll" as const, label: "Infinite Scroll", desc: "Continuous scrolling" },
-                    { key: "slide" as const, label: "Slide", desc: "Swipe to turn pages" },
-                    { key: "curl" as const, label: "Page Curl", desc: "Realistic page turn" },
-                  ].map((mode) => (
-                    <button
-                      key={mode.key}
-                      type="button"
-                      onClick={() => updatePreference("pageTurnMode", mode.key)}
-                      className={`border px-4 py-3 text-left transition ${
-                        preferences.pageTurnMode === mode.key
-                          ? "border-zinc-400 bg-zinc-900"
-                          : "border-zinc-800 hover:border-zinc-600"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex flex-col gap-1">
-                          <span className="text-xs text-zinc-50">{mode.label}</span>
-                          <span className="text-xs text-zinc-500">{mode.desc}</span>
-                        </div>
-                        {preferences.pageTurnMode === mode.key && (
-                          <span className="text-zinc-400">✓</span>
-                        )}
-                      </div>
-                    </button>
-                  ))}
+                    { key: "infinite-scroll" as const, label: "Infinite Scroll" },
+                    { key: "slide" as const, label: "Slide" },
+                    { key: "curl" as const, label: "Page Curl" },
+                  ].map((mode) => {
+                    const isActive = preferences.pageTurnMode === mode.key;
+                    return (
+                      <button
+                        key={mode.key}
+                        type="button"
+                        onClick={() => updatePreference("pageTurnMode", mode.key)}
+                        className="border-b px-3 py-2 text-left text-xs transition"
+                        style={{
+                          borderColor: isActive ? currentTheme.foreground : currentTheme.border,
+                          color: isActive ? currentTheme.foreground : currentTheme.muted,
+                        }}
+                      >
+                        {mode.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
 
             <div>
-              <h3 
+              <h3
                 className="mb-3 text-xs uppercase tracking-[0.3em]"
                 style={{ color: currentTheme.mutedForeground }}
               >
-                Page Margins
+                Margins
               </h3>
               <div className="flex flex-col gap-4">
                 <div>
-                  <label 
+                  <label
                     className="mb-2 block text-xs"
                     style={{ color: currentTheme.mutedForeground }}
                   >
-                    Left & Right (Both Sides)
+                    Left + Right
                   </label>
                   <div className="flex items-center gap-3">
                     <input
@@ -358,7 +322,7 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
                 </div>
 
                 <div>
-                  <label 
+                  <label
                     className="mb-2 block text-xs"
                     style={{ color: currentTheme.mutedForeground }}
                   >
@@ -380,7 +344,7 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
                 </div>
 
                 <div>
-                  <label 
+                  <label
                     className="mb-2 block text-xs"
                     style={{ color: currentTheme.mutedForeground }}
                   >
@@ -405,12 +369,11 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
           </div>
         )}
 
-        {/* SPACING SECTION */}
         {activeSection === "spacing" && (
           <div className="flex flex-col gap-6">
             <div>
               <div className="mb-3 flex items-center justify-between">
-                <h3 
+                <h3
                   className="text-xs uppercase tracking-[0.3em]"
                   style={{ color: currentTheme.mutedForeground }}
                 >
@@ -448,7 +411,7 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
 
             <div>
               <div className="mb-3 flex items-center justify-between">
-                <h3 
+                <h3
                   className="text-xs uppercase tracking-[0.3em]"
                   style={{ color: currentTheme.mutedForeground }}
                 >
@@ -467,9 +430,7 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
               {preferences.paragraphSettings.override && (
                 <div className="flex flex-col gap-4">
                   <div>
-                    <label className="mb-2 block text-xs text-zinc-500">
-                      Spacing
-                    </label>
+                    <label className="mb-2 block text-xs text-zinc-500">Spacing</label>
                     <div className="flex items-center gap-3">
                       <input
                         type="range"
@@ -489,9 +450,7 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
                   </div>
 
                   <div>
-                    <label className="mb-2 block text-xs text-zinc-500">
-                      Indentation
-                    </label>
+                    <label className="mb-2 block text-xs text-zinc-500">Indent</label>
                     <div className="flex items-center gap-3">
                       <input
                         type="range"
@@ -523,9 +482,9 @@ export const ReaderPreferencesPanel = memo(function ReaderPreferencesPanel({
                   };
                   onUpdate({ ...preferences, ...defaults });
                 }}
-                className="w-full px-4 py-2 text-xs uppercase tracking-[0.3em] transition-colors"
+                className="w-full border-b px-4 py-2 text-xs uppercase tracking-[0.3em] transition-colors"
                 style={{
-                  border: `1px solid ${currentTheme.border}`,
+                  borderColor: currentTheme.border,
                   color: currentTheme.muted,
                 }}
                 onMouseEnter={(e) => {

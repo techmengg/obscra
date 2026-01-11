@@ -55,6 +55,7 @@ export const TTSPanel = memo(function TTSPanel({
   const [provider, setProvider] = useState<"browser" | "elevenlabs">("browser");
   const tts = useTTS();
   const elevenLabs = useElevenLabsTTS();
+
   const clearWordHighlight = useCallback(() => {
     onWordChange(-1);
   }, [onWordChange]);
@@ -75,7 +76,7 @@ export const TTSPanel = memo(function TTSPanel({
 
   const primaryButtonLabel = useMemo(() => {
     if (!isPlaying) {
-      if (!hasVoices) return isLoadingVoices ? "Loading..." : "Select a voice";
+      if (!hasVoices) return isLoadingVoices ? "Loading..." : "Select voice";
       if (!isBrowserProvider && isGenerating) return "Generating...";
       return isBrowserProvider ? "Play" : "Generate & Play";
     }
@@ -181,7 +182,6 @@ export const TTSPanel = memo(function TTSPanel({
     handlePlayPause();
   }, [autoStartKey, handlePlayPause, hasVoices, isPlaying]);
 
-  // Expose TTS state to parent
   useEffect(() => {
     if (!onTTSStateChange) return;
 
@@ -244,11 +244,10 @@ export const TTSPanel = memo(function TTSPanel({
         <button
           type="button"
           onClick={() => handleProviderSelect("browser")}
-          className="rounded px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition-colors"
+          className="border-b px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition-colors"
           style={{
-            backgroundColor: isBrowserProvider ? theme.active : "transparent",
-            color: isBrowserProvider ? theme.activeForeground : theme.mutedForeground,
-            border: `1px solid ${isBrowserProvider ? theme.active : theme.border}`,
+            borderColor: isBrowserProvider ? theme.foreground : theme.border,
+            color: isBrowserProvider ? theme.foreground : theme.mutedForeground,
           }}
         >
           Device Voices
@@ -256,25 +255,18 @@ export const TTSPanel = memo(function TTSPanel({
         <button
           type="button"
           onClick={() => handleProviderSelect("elevenlabs")}
-          className="rounded px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition-colors"
+          className="border-b px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition-colors"
           style={{
-            backgroundColor: !isBrowserProvider ? theme.active : "transparent",
-            color: !isBrowserProvider ? theme.activeForeground : theme.mutedForeground,
-            border: `1px solid ${!isBrowserProvider ? theme.active : theme.border}`,
+            borderColor: !isBrowserProvider ? theme.foreground : theme.border,
+            color: !isBrowserProvider ? theme.foreground : theme.mutedForeground,
           }}
         >
           ElevenLabs AI
         </button>
       </div>
 
-      <p className="text-xs leading-relaxed" style={{ color: theme.mutedForeground }}>
-        {isBrowserProvider
-          ? "Uses your browser's built-in speech for instant playback and word highlighting."
-          : "Streams high-quality voices from ElevenLabs. Configure ELEVENLABS_API_KEY in the server environment."}
-      </p>
-
       <div
-        className="flex items-center justify-between rounded border px-3 py-2 text-xs uppercase tracking-[0.2em]"
+        className="flex items-center justify-between border-b px-1 py-2 text-xs uppercase tracking-[0.2em]"
         style={{ borderColor: theme.border, color: theme.mutedForeground }}
       >
         <span>
@@ -285,24 +277,18 @@ export const TTSPanel = memo(function TTSPanel({
             </span>
           )}
         </span>
-        <button
-          type="button"
-          onClick={() => onAutoAdvanceChange(!autoAdvanceEnabled)}
-          disabled={!hasNextChapter && !autoAdvanceEnabled}
-          className={`relative ml-2 h-6 w-11 rounded-full transition ${
-            autoAdvanceEnabled ? "bg-emerald-500" : "bg-zinc-700"
-          } ${!hasNextChapter && !autoAdvanceEnabled ? "opacity-50" : ""}`}
-          aria-pressed={autoAdvanceEnabled}
-        >
-          <span
-            className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-white transition ${
-              autoAdvanceEnabled ? "translate-x-5" : "translate-x-1"
-            }`}
+        <label className="ml-2 flex items-center gap-2 text-xs">
+          <input
+            type="checkbox"
+            checked={autoAdvanceEnabled}
+            onChange={(e) => onAutoAdvanceChange(e.target.checked)}
+            disabled={!hasNextChapter && !autoAdvanceEnabled}
+            className="h-4 w-4"
           />
-        </button>
+          <span>{autoAdvanceEnabled ? "On" : "Off"}</span>
+        </label>
       </div>
 
-      {/* Voice Selection */}
       <div>
         <h3
           className="mb-3 text-xs uppercase tracking-[0.3em]"
@@ -322,7 +308,7 @@ export const TTSPanel = memo(function TTSPanel({
               if (voice) elevenLabs.setVoice(voice);
             }
           }}
-          className="w-full rounded border px-3 py-2 text-sm transition-colors"
+          className="w-full border-b px-3 py-2 text-sm transition-colors"
           style={{
             backgroundColor: theme.background,
             color: theme.foreground,
@@ -333,7 +319,6 @@ export const TTSPanel = memo(function TTSPanel({
             ? tts.voices.map((voice, index) => (
                 <option key={`${voice.voiceURI}-${index}`} value={voice.voiceURI}>
                   {voice.name}
-                  {!voice.localService ? " ⭐" : ""}
                 </option>
               ))
             : elevenLabs.voices.map((voice) => (
@@ -343,11 +328,6 @@ export const TTSPanel = memo(function TTSPanel({
                 </option>
               ))}
         </select>
-        <p className="mt-2 text-xs" style={{ color: theme.mutedForeground }}>
-          {isBrowserProvider
-            ? "⭐ marks high-quality voices exposed by your device."
-            : "Voices load from ElevenLabs and count toward your API usage."}
-        </p>
         {isBrowserProvider && tts.error && (
           <p className="mt-2 text-xs" style={{ color: theme.activeForeground }}>
             {tts.error}
@@ -360,7 +340,6 @@ export const TTSPanel = memo(function TTSPanel({
         )}
       </div>
 
-      {/* Playback Controls */}
       <div>
         <h3
           className="mb-3 text-xs uppercase tracking-[0.3em]"
@@ -371,20 +350,20 @@ export const TTSPanel = memo(function TTSPanel({
         <div className="flex gap-3">
           <button
             type="button"
-          onClick={handlePlayPause}
-          disabled={!canUseVoices || (isLoadingVoices && !isBrowserProvider)}
-            className="flex-1 rounded px-4 py-3 text-sm font-medium uppercase tracking-[0.2em] transition-all active:scale-95 disabled:opacity-50"
+            onClick={handlePlayPause}
+            disabled={!canUseVoices || (isLoadingVoices && !isBrowserProvider)}
+            className="flex-1 border-b px-4 py-3 text-sm font-medium uppercase tracking-[0.2em] transition-all active:scale-95 disabled:opacity-50"
             style={{
-              backgroundColor: theme.active,
-              color: theme.activeForeground,
+              borderColor: theme.foreground,
+              color: theme.foreground,
             }}
             onMouseEnter={(e) => {
               if (!e.currentTarget.disabled) {
-                e.currentTarget.style.backgroundColor = theme.hover;
+                e.currentTarget.style.color = theme.hoverForeground;
               }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = theme.active;
+              e.currentTarget.style.color = theme.foreground;
             }}
           >
             {primaryButtonLabel}
@@ -392,61 +371,49 @@ export const TTSPanel = memo(function TTSPanel({
           <button
             type="button"
             onClick={handleStop}
-            className="rounded px-4 py-3 text-sm font-medium uppercase tracking-[0.2em] transition-all active:scale-95"
+            className="border-b px-4 py-3 text-sm font-medium uppercase tracking-[0.2em] transition-all active:scale-95"
             style={{
-              border: `1px solid ${theme.border}`,
-              color: theme.foreground,
+              borderColor: theme.border,
+              color: theme.mutedForeground,
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = theme.hover;
-              e.currentTarget.style.borderColor = theme.hover;
+              e.currentTarget.style.color = theme.hoverForeground;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
-              e.currentTarget.style.borderColor = theme.border;
+              e.currentTarget.style.color = theme.mutedForeground;
             }}
           >
             Stop
           </button>
         </div>
 
-        {/* Skip Paragraph */}
         {isBrowserProvider ? (
           <div className="mt-3">
             <button
               type="button"
               onClick={tts.skipParagraph}
-              className="w-full rounded px-4 py-3 text-sm font-medium uppercase tracking-[0.2em] transition-all active:scale-95"
+              className="w-full border-b px-4 py-3 text-sm font-medium uppercase tracking-[0.2em] transition-all active:scale-95"
               style={{
-                border: `1px solid ${theme.border}`,
-                color: theme.foreground,
+                borderColor: theme.border,
+                color: theme.mutedForeground,
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = theme.hover;
-                e.currentTarget.style.borderColor = theme.hover;
+                e.currentTarget.style.color = theme.hoverForeground;
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-                e.currentTarget.style.borderColor = theme.border;
+                e.currentTarget.style.color = theme.mutedForeground;
               }}
             >
               Skip Paragraph
             </button>
           </div>
         ) : (
-          <div
-            className="mt-3 rounded border px-4 py-3 text-xs"
-            style={{
-              borderColor: theme.border,
-              color: theme.mutedForeground,
-            }}
-          >
-            Paragraph skipping is not available while ElevenLabs audio is playing.
-          </div>
+          <p className="mt-3 text-xs" style={{ color: theme.mutedForeground }}>
+            Skip is unavailable in ElevenLabs mode.
+          </p>
         )}
       </div>
 
-      {/* Speed / Stability */}
       {isBrowserProvider ? (
         <div>
           <h3
@@ -465,10 +432,7 @@ export const TTSPanel = memo(function TTSPanel({
               onChange={(e) => tts.setRate(Number(e.target.value))}
               className="flex-1"
             />
-            <span
-              className="w-12 text-right text-xs"
-              style={{ color: theme.mutedForeground }}
-            >
+            <span className="w-12 text-right text-xs" style={{ color: theme.mutedForeground }}>
               {tts.rate.toFixed(1)}x
             </span>
           </div>
@@ -491,17 +455,13 @@ export const TTSPanel = memo(function TTSPanel({
               onChange={(e) => elevenLabs.setStability(Number(e.target.value))}
               className="flex-1"
             />
-            <span
-              className="w-12 text-right text-xs"
-              style={{ color: theme.mutedForeground }}
-            >
+            <span className="w-12 text-right text-xs" style={{ color: theme.mutedForeground }}>
               {elevenLabs.stability.toFixed(2)}
             </span>
           </div>
         </div>
       )}
 
-      {/* Pitch / Clarity */}
       {isBrowserProvider ? (
         <div>
           <h3
@@ -520,10 +480,7 @@ export const TTSPanel = memo(function TTSPanel({
               onChange={(e) => tts.setPitch(Number(e.target.value))}
               className="flex-1"
             />
-            <span
-              className="w-12 text-right text-xs"
-              style={{ color: theme.mutedForeground }}
-            >
+            <span className="w-12 text-right text-xs" style={{ color: theme.mutedForeground }}>
               {tts.pitch.toFixed(1)}x
             </span>
           </div>
@@ -534,7 +491,7 @@ export const TTSPanel = memo(function TTSPanel({
             className="mb-3 text-xs uppercase tracking-[0.3em]"
             style={{ color: theme.mutedForeground }}
           >
-            Clarity & Similarity
+            Clarity
           </h3>
           <div className="flex items-center gap-3">
             <input
@@ -546,17 +503,13 @@ export const TTSPanel = memo(function TTSPanel({
               onChange={(e) => elevenLabs.setSimilarityBoost(Number(e.target.value))}
               className="flex-1"
             />
-            <span
-              className="w-12 text-right text-xs"
-              style={{ color: theme.mutedForeground }}
-            >
+            <span className="w-12 text-right text-xs" style={{ color: theme.mutedForeground }}>
               {elevenLabs.similarityBoost.toFixed(2)}
             </span>
           </div>
         </div>
       )}
 
-      {/* Volume Control */}
       <div>
         <h3
           className="mb-3 text-xs uppercase tracking-[0.3em]"
@@ -574,74 +527,16 @@ export const TTSPanel = memo(function TTSPanel({
             onChange={(e) => handleVolumeChange(Number(e.target.value))}
             className="flex-1"
           />
-          <span
-            className="w-12 text-right text-xs"
-            style={{ color: theme.mutedForeground }}
-          >
+          <span className="w-12 text-right text-xs" style={{ color: theme.mutedForeground }}>
             {Math.round(activeVolume * 100)}%
           </span>
         </div>
       </div>
 
-      {/* Status */}
-      {isPlaying && (
-        <div
-          className="rounded border px-4 py-3 text-center text-xs uppercase tracking-[0.25em]"
-          style={{
-            borderColor: theme.border,
-            color: theme.muted,
-          }}
-        >
-          {isPaused ? "Paused" : "Playing"}
-        </div>
-      )}
-      {!isPlaying && !isBrowserProvider && isGenerating && (
-        <div
-          className="rounded border px-4 py-3 text-center text-xs uppercase tracking-[0.25em]"
-          style={{
-            borderColor: theme.border,
-            color: theme.muted,
-          }}
-        >
-          Preparing audio...
-        </div>
-      )}
-
-      {/* Help Text */}
       {!isPlaying && voiceCount === 0 && (
-        <div
-          className="rounded border px-4 py-3 text-center text-xs"
-          style={{
-            borderColor: theme.border,
-            color: theme.mutedForeground,
-          }}
-        >
-          {isLoadingVoices ? "Loading voices..." : "No voices detected for this mode."}
-        </div>
-      )}
-
-      {!isPlaying && voiceCount > 0 && (
-        <div
-          className="rounded border px-4 py-3 text-xs leading-relaxed"
-          style={{
-            borderColor: theme.border,
-            color: theme.mutedForeground,
-          }}
-        >
-          <p className="mb-2">
-            <strong>How to use:</strong>
-          </p>
-          <ul className="list-inside list-disc space-y-1">
-            <li>Select a voice for the active mode.</li>
-            <li>Click Play to read the chapter aloud.</li>
-            <li>
-              {isBrowserProvider
-                ? "Words highlight and paragraph skipping are available."
-                : "Highlighting and skip controls are disabled while streaming ElevenLabs audio."}
-            </li>
-            <li>Use the floating controls to manage playback anywhere on the page.</li>
-          </ul>
-        </div>
+        <p className="text-xs" style={{ color: theme.mutedForeground }}>
+          {isLoadingVoices ? "Loading voices..." : "No voices available."}
+        </p>
       )}
     </div>
   );

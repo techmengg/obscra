@@ -102,10 +102,11 @@ const ChapterButton = memo(
     ref={ref}
     type="button"
     onClick={onClick}
-    className="group relative w-full rounded-lg px-4 py-3 text-left text-sm transition-all active:scale-98"
+    className="group w-full px-3 py-2 text-left text-sm transition active:scale-98"
     style={{
       backgroundColor: active ? theme.active : 'transparent',
       color: active ? theme.activeForeground : theme.muted,
+      borderBottom: `1px solid ${theme.border}`,
     }}
     onMouseEnter={(e) => {
       if (!active) {
@@ -125,7 +126,7 @@ const ChapterButton = memo(
       <span className="flex-1 leading-snug line-clamp-2">{chapter.title}</span>
       {active && (
         <div 
-          className="h-1.5 w-1.5 rounded-full flex-shrink-0"
+          className="h-1.5 w-1.5 flex-shrink-0"
           style={{ backgroundColor: theme.muted }}
         />
       )}
@@ -394,15 +395,15 @@ export const ReaderView = memo(function ReaderView({ novel, initialIndex }: Read
 
   const navContent = (
     <>
-      <div className="hidden md:flex md:flex-col text-center text-xs uppercase tracking-[0.3em]" role="tablist">
+      <div className="hidden md:flex md:flex-col text-center text-[0.6rem] uppercase tracking-[0.25em]" role="tablist">
           {navItems.map((item, idx) => (
             <button
               key={item.key}
               type="button"
               onClick={() => setActivePanel(item.key)}
               style={{ 
-                borderColor: currentTheme.border,
                 color: activePanel === item.key ? currentTheme.activeForeground : currentTheme.muted,
+                borderBottom: `1px solid ${currentTheme.border}`,
               }}
               onMouseEnter={(e) => {
                 if (activePanel !== item.key) {
@@ -414,9 +415,7 @@ export const ReaderView = memo(function ReaderView({ novel, initialIndex }: Read
                   e.currentTarget.style.color = currentTheme.muted;
                 }
               }}
-              className={`border border-l-0 border-r-0 px-5 py-4 transition ${
-                idx !== navItems.length - 1 ? "border-b" : ""
-              }`}
+              className="px-5 py-4 transition"
               role="tab"
               aria-selected={activePanel === item.key}
             >
@@ -511,17 +510,17 @@ export const ReaderView = memo(function ReaderView({ novel, initialIndex }: Read
       >
         {/* Mobile Tab Navigation */}
         <div 
-          className="sticky top-0 z-10 grid grid-cols-3 text-center text-[0.65rem] uppercase tracking-[0.25em]" 
-          style={{ 
-            backgroundColor: currentTheme.background,
-          }}
-        >
+        className="sticky top-0 z-10 grid grid-cols-3 text-center text-[0.6rem] uppercase tracking-[0.25em]" 
+        style={{ 
+          backgroundColor: currentTheme.background,
+        }}
+      >
           {navItems.map((item) => (
             <button
               key={item.key}
               type="button"
               onClick={() => setActivePanel(item.key)}
-              className={`relative min-h-[48px] px-3 py-3 transition-all active:scale-95 ${
+              className={`relative min-h-[48px] px-3 py-3 transition active:scale-95 ${
                 activePanel === item.key 
                   ? "text-zinc-50 font-semibold" 
                   : "text-zinc-500"
@@ -533,7 +532,7 @@ export const ReaderView = memo(function ReaderView({ novel, initialIndex }: Read
               {item.label}
               {activePanel === item.key && (
                 <div 
-                  className="absolute bottom-0 left-0 right-0 h-0.5"
+                  className="absolute bottom-0 left-0 right-0 h-px"
                   style={{ backgroundColor: currentTheme.foreground }}
                 />
               )}
@@ -547,10 +546,10 @@ export const ReaderView = memo(function ReaderView({ novel, initialIndex }: Read
       <button
         type="button"
         onClick={() => setIsMobileNavOpen(true)}
-        className="fixed left-3 top-3 z-30 flex h-11 w-11 items-center justify-center rounded-full shadow-lg backdrop-blur-md transition-all active:scale-95 md:hidden"
+        className="fixed left-3 top-3 z-30 flex h-10 w-10 items-center justify-center border transition active:scale-95 md:hidden"
         style={{
-          backgroundColor: `${currentTheme.background}f0`,
-          boxShadow: `0 4px 12px ${currentTheme.background}80`,
+          backgroundColor: currentTheme.background,
+          borderColor: currentTheme.border,
         }}
         aria-label="Open menu"
         aria-expanded={isMobileNavOpen}
@@ -571,11 +570,11 @@ export const ReaderView = memo(function ReaderView({ novel, initialIndex }: Read
       {/* Fixed Library Link (Mobile) */}
       <Link
         href="/library"
-        className="fixed right-3 top-3 z-30 rounded-full shadow-lg backdrop-blur-md px-4 py-2.5 text-[0.65rem] uppercase tracking-[0.25em] transition-all active:scale-95 md:hidden"
+        className="fixed right-3 top-3 z-30 border px-3 py-2 text-[0.6rem] uppercase tracking-[0.25em] transition active:scale-95 md:hidden"
         style={{
-          backgroundColor: `${currentTheme.background}f0`,
+          backgroundColor: currentTheme.background,
           color: currentTheme.muted,
-          boxShadow: `0 4px 12px ${currentTheme.background}80`,
+          borderColor: currentTheme.border,
         }}
       >
         library
@@ -589,10 +588,10 @@ export const ReaderView = memo(function ReaderView({ novel, initialIndex }: Read
           type="button"
           onClick={goPrev}
           disabled={currentIndex === 0}
-          className="flex h-12 w-12 items-center justify-center rounded-full shadow-lg backdrop-blur-md text-zinc-200 transition-all active:scale-90 disabled:opacity-25 disabled:cursor-not-allowed"
+          className="flex h-11 w-11 items-center justify-center border text-zinc-200 transition active:scale-90 disabled:opacity-25 disabled:cursor-not-allowed"
           style={{
-            backgroundColor: `${currentTheme.background}f0`,
-            boxShadow: `0 4px 12px ${currentTheme.background}80`,
+            backgroundColor: currentTheme.background,
+            borderColor: currentTheme.border,
           }}
           aria-label="Previous chapter"
         >
@@ -613,10 +612,10 @@ export const ReaderView = memo(function ReaderView({ novel, initialIndex }: Read
           type="button"
           onClick={goNext}
           disabled={currentIndex >= maxIndex}
-          className="flex h-12 w-12 items-center justify-center rounded-full shadow-lg backdrop-blur-md text-zinc-200 transition-all active:scale-90 disabled:opacity-25 disabled:cursor-not-allowed"
+          className="flex h-11 w-11 items-center justify-center border text-zinc-200 transition active:scale-90 disabled:opacity-25 disabled:cursor-not-allowed"
           style={{
-            backgroundColor: `${currentTheme.background}f0`,
-            boxShadow: `0 4px 12px ${currentTheme.background}80`,
+            backgroundColor: currentTheme.background,
+            borderColor: currentTheme.border,
           }}
           aria-label="Next chapter"
         >
@@ -667,7 +666,7 @@ export const ReaderView = memo(function ReaderView({ novel, initialIndex }: Read
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex gap-2 md:gap-4">
               {novel.coverImage && (
-                <div className="h-20 w-14 md:h-32 md:w-24 flex-shrink-0 border border-zinc-800 bg-zinc-900/30">
+                <div className="h-20 w-14 md:h-32 md:w-24 flex-shrink-0 bg-zinc-900/40">
                   {novel.coverImage.startsWith("data:") ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -750,7 +749,7 @@ export const ReaderView = memo(function ReaderView({ novel, initialIndex }: Read
         <article
           ref={articleRef}
           key={currentChapter?.id}
-          className="chapter-content flex-1 mb-20 md:mb-0 w-full"
+        className="chapter-content flex-1 mb-20 md:mb-0 w-full"
           data-paragraph-override={preferences.paragraphSettings.override}
           style={{
             maxWidth: `${preferences.maxWidth}px`,
@@ -779,11 +778,11 @@ export const ReaderView = memo(function ReaderView({ novel, initialIndex }: Read
         
         {/* Chapter Counter - Bottom Right */}
         <div 
-          className="fixed bottom-4 right-4 z-20 rounded-full shadow-lg backdrop-blur-md px-4 py-2.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] md:hidden"
+          className="fixed bottom-4 right-4 z-20 border px-3 py-2 text-[0.6rem] font-medium uppercase tracking-[0.25em] md:hidden"
           style={{
-            backgroundColor: `${currentTheme.background}f0`,
+            backgroundColor: currentTheme.background,
             color: currentTheme.muted,
-            boxShadow: `0 4px 12px ${currentTheme.background}80`,
+            borderColor: currentTheme.border,
           }}
         >
           {currentIndex + 1}/{novel.chapters.length}

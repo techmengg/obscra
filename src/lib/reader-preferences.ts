@@ -79,7 +79,7 @@ export const DEFAULT_PREFERENCES: ReaderPreferences = {
 export const THEMES = {
   dark: {
     name: 'Dark',
-    background: '#020202',
+    background: '#151515',
     foreground: '#f4f4f4',
     muted: '#a1a1a1',
     mutedForeground: '#737373',
